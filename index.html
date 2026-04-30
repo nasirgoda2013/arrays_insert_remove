@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swift Arrays: Methods & Properties</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+:root {
+  --bg-dark: #0f0f1a;
+  --bg-card: #1a1a2e;
+  --bg-card2: #16213e;
+  --accent-orange: #ff6b35;
+  --accent-blue: #4ecdc4;
+  --accent-purple: #a855f7;
+  --accent-pink: #ff6b9d;
+  --accent-green: #22c55e;
+  --accent-yellow: #fbbf24;
+  --accent-red: #ef4444;
+  --text-primary: #f0f0f0;
+  --text-secondary: #a0a0b8;
+  --text-muted: #6b6b80;
+  --code-bg: #0d1117;
+  --code-highlight: rgba(78, 205, 196, 0.15);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ─── NAV ─── */
+.top-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(15,15,26,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 12px 24px;
+  display: flex; align-items: center; gap: 18px;
+  overflow-x: auto;
+}
+.top-nav a {
+  color: var(--text-secondary); text-decoration: none;
+  font-size: 13px; font-weight: 600; white-space: nowrap;
+  padding: 6px 14px; border-radius: 20px;
+  transition: all 0.25s;
+  font-family: 'Fredoka', sans-serif;
+}
+.top-nav a:hover, .top-nav a.active {
+  color: #fff; background: rgba(78,205,196,0.2);
+}
+.nav-logo {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700; font-size: 18px;
+  color: var(--accent-orange) !important;
+  background: none !important;
+}
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 100px 24px 60px;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 30% 20%, rgba(168,85,247,0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(78,205,196,0.12) 0%, transparent 50%),
+              var(--bg-dark);
+}
+.hero-particles {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.particle {
+  position: absolute; border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+  50% { transform: translateY(-30px) scale(1.1); opacity: 1; }
+}
+.hero h1 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-pink), var(--accent-purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 16px;
+  animation: fadeUp 0.8s ease-out;
+}
+.hero .subtitle {
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  animation: fadeUp 0.8s 0.2s ease-out both;
+}
+.hero-badges {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  justify-content: center;
+  animation: fadeUp 0.8s 0.4s ease-out both;
+}
+.badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: 30px;
+  font-size: 14px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── SECTIONS ─── */
+.section {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+.section-label {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 13px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 3px;
+  color: var(--accent-blue);
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700; margin-bottom: 24px;
+}
+
+/* ─── CARDS ─── */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: var(--shadow);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+
+/* ─── CODE BLOCKS ─── */
+.code-block {
+  background: var(--code-bg);
+  border-radius: var(--radius-sm);
+  padding: 20px 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 2;
+  overflow-x: auto;
+  border: 1px solid rgba(255,255,255,0.06);
+  margin: 16px 0;
+  position: relative;
+}
+.code-block .line {
+  display: block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  transition: background 0.4s, transform 0.3s;
+  white-space: pre;
+}
+.code-block .line.active {
+  background: var(--code-highlight);
+  transform: translateX(4px);
+}
+.code-block .line.executed {
+  opacity: 0.5;
+}
+.code-line-num {
+  color: var(--text-muted);
+  display: inline-block;
+  width: 24px;
+  text-align: right;
+  margin-right: 16px;
+  user-select: none;
+}
+.kw { color: #ff7b72; }
+.str { color: #a5d6ff; }
+.cmt { color: #8b949e; font-style: italic; }
+.fn { color: #d2a8ff; }
+.num { color: #79c0ff; }
+.op { color: #ffa657; }
+
+/* ─── ARRAY VIS ─── */
+.array-vis {
+  display: flex; gap: 6px; align-items: flex-end;
+  margin: 16px 0; flex-wrap: wrap;
+  min-height: 80px;
+}
+.array-cell {
+  display: flex; flex-direction: column; align-items: center;
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.array-cell-val {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600; font-size: 14px;
+  min-width: 70px; text-align: center;
+  position: relative;
+}
+.array-cell-idx {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--text-muted);
+  margin-top: 6px;
+}
+.array-cell.removing .array-cell-val {
+  background: linear-gradient(135deg, var(--accent-red), #dc2626);
+  animation: shake 0.5s;
+}
+.array-cell.inserting .array-cell-val {
+  background: linear-gradient(135deg, var(--accent-green), #16a34a);
+  animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+@keyframes slideOut {
+  to { transform: translateY(-40px) scale(0.5); opacity: 0; }
+}
+
+/* ─── BUTTONS ─── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px; border-radius: 30px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 15px; font-weight: 600;
+  border: none; cursor: pointer;
+  transition: all 0.25s;
+  color: #fff;
+}
+.btn-primary { background: linear-gradient(135deg, var(--accent-orange), var(--accent-pink)); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,53,0.4); }
+.btn-blue { background: linear-gradient(135deg, var(--accent-blue), #0ea5e9); }
+.btn-blue:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(78,205,196,0.4); }
+.btn-green { background: linear-gradient(135deg, var(--accent-green), #16a34a); }
+.btn-purple { background: linear-gradient(135deg, var(--accent-purple), #7c3aed); }
+.btn-sm { padding: 8px 18px; font-size: 13px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+/* ─── QUIZ ─── */
+.quiz-option {
+  display: block; width: 100%;
+  padding: 16px 20px; margin: 8px 0;
+  background: rgba(255,255,255,0.04);
+  border: 2px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px; font-weight: 600;
+  cursor: pointer; text-align: left;
+  transition: all 0.25s;
+}
+.quiz-option:hover:not(.selected) {
+  border-color: var(--accent-blue);
+  background: rgba(78,205,196,0.08);
+}
+.quiz-option.correct {
+  border-color: var(--accent-green) !important;
+  background: rgba(34,197,94,0.15) !important;
+}
+.quiz-option.wrong {
+  border-color: var(--accent-red) !important;
+  background: rgba(239,68,68,0.1) !important;
+}
+.quiz-option.selected { pointer-events: none; }
+.feedback-box {
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  margin-top: 12px;
+  font-weight: 600;
+  display: none;
+}
+.feedback-box.show { display: block; animation: fadeUp 0.3s; }
+.feedback-correct { background: rgba(34,197,94,0.12); border-left: 4px solid var(--accent-green); }
+.feedback-wrong { background: rgba(239,68,68,0.1); border-left: 4px solid var(--accent-red); }
+
+/* ─── HINT ─── */
+.hint-btn {
+  background: none; border: 1px dashed var(--accent-yellow);
+  color: var(--accent-yellow); padding: 6px 16px;
+  border-radius: 20px; font-size: 13px; cursor: pointer;
+  font-family: 'Fredoka', sans-serif; font-weight: 600;
+  margin-bottom: 8px;
+  transition: all 0.25s;
+}
+.hint-btn:hover { background: rgba(251,191,36,0.1); }
+.hint-text {
+  display: none; padding: 12px 16px;
+  background: rgba(251,191,36,0.08);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--accent-yellow);
+  font-size: 14px; color: var(--accent-yellow);
+  margin-bottom: 12px;
+}
+.hint-text.show { display: block; animation: fadeUp 0.3s; }
+
+/* ─── PROGRESS BAR ─── */
+.progress-wrap {
+  position: fixed; top: 54px; left: 0; right: 0; z-index: 99;
+  height: 4px; background: rgba(255,255,255,0.06);
+}
+.progress-bar {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--accent-orange), var(--accent-pink), var(--accent-purple));
+  transition: width 0.3s;
+}
+
+/* ─── GRID LAYOUTS ─── */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px; margin: 24px 0;
+}
+.feature-card {
+  background: var(--bg-card2);
+  border-radius: var(--radius);
+  padding: 28px;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.3s;
+}
+.feature-card:hover {
+  border-color: rgba(78,205,196,0.3);
+  transform: translateY(-4px);
+}
+.feature-icon {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; margin-bottom: 16px;
+}
+.feature-card h3 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 18px; margin-bottom: 8px;
+}
+.feature-card code {
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(255,255,255,0.06);
+  padding: 3px 8px; border-radius: 6px;
+  font-size: 13px; color: var(--accent-blue);
+}
+
+/* ─── TRACING ─── */
+.trace-controls {
+  display: flex; gap: 12px; align-items: center;
+  flex-wrap: wrap; margin: 16px 0;
+}
+.trace-output {
+  background: var(--code-bg);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  min-height: 48px;
+  border: 1px solid rgba(255,255,255,0.06);
+  margin: 12px 0;
+}
+
+/* ─── BUG HUNT ─── */
+.bug-card {
+  background: var(--bg-card2);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin: 16px 0;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.bug-reveal {
+  display: none;
+  padding: 16px;
+  background: rgba(34,197,94,0.08);
+  border-radius: var(--radius-sm);
+  margin-top: 12px;
+  border-left: 3px solid var(--accent-green);
+}
+.bug-reveal.show { display: block; animation: fadeUp 0.3s; }
+
+/* ─── DRAG DROP ─── */
+.drag-zone {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  min-height: 60px; padding: 16px;
+  border-radius: var(--radius-sm);
+  border: 2px dashed rgba(255,255,255,0.1);
+  margin: 12px 0;
+  transition: border-color 0.3s;
+}
+.drag-zone.over { border-color: var(--accent-blue); }
+.drag-item {
+  padding: 10px 18px;
+  background: linear-gradient(135deg, var(--accent-purple), #7c3aed);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; font-weight: 600;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.2s;
+}
+.drag-item:active { cursor: grabbing; transform: scale(0.95); }
+
+/* ─── SCORE ─── */
+.score-display {
+  text-align: center; padding: 32px;
+  background: linear-gradient(135deg, rgba(168,85,247,0.15), rgba(78,205,196,0.1));
+  border-radius: var(--radius);
+  margin-top: 24px;
+  display: none;
+}
+.score-display.show { display: block; animation: fadeUp 0.5s; }
+.score-number {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 72px; font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-pink));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* ─── DIVIDER ─── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  margin: 60px auto;
+  max-width: 400px;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .section { padding: 50px 16px; }
+  .card { padding: 20px; }
+  .code-block { font-size: 12px; padding: 14px; }
+  .array-cell-val { padding: 8px 12px; min-width: 55px; font-size: 12px; }
+}
+
+/* ─── EXIT TICKET LAYOUT ─── */
+.exit-ticket-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+.exit-ticket-code-panel {
+  position: sticky;
+  top: 72px;
+  z-index: 10;
+}
+.exit-ticket-code-panel .code-block {
+  margin: 0;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  border: 1px solid rgba(78,205,196,0.25);
+}
+.exit-ticket-code-label {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 12px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 2px;
+  color: var(--accent-blue);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.exit-ticket-code-label .pulse-dot {
+  width: 8px; height: 8px;
+  background: var(--accent-blue);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+.exit-ticket-questions {
+  min-width: 0;
+}
+@media (max-width: 860px) {
+  .exit-ticket-layout {
+    grid-template-columns: 1fr;
+  }
+  .exit-ticket-code-panel {
+    position: sticky;
+    top: 58px;
+    z-index: 10;
+    background: var(--bg-dark);
+    padding: 12px 0;
+    margin: 0 -16px;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <span class="nav-logo">Swift</span>
+  <a href="#warmup">Warm Up</a>
+  <a href="#remove">remove(at:)</a>
+  <a href="#insert">insert(_:at:)</a>
+  <a href="#review">Review</a>
+  <a href="#mistakes">Mistakes</a>
+  <a href="#challenge">Challenge</a>
+  <a href="#tracing">Tracing</a>
+  <a href="#exit-ticket">Exit Ticket</a>
+</nav>
+
+<!-- PROGRESS -->
+<div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-particles" id="particles"></div>
+  <div style="position:relative; z-index:1;">
+    <div class="section-label">Swift Playgrounds · Period 2</div>
+    <h1>Arrays: Methods & Properties</h1>
+    <p class="subtitle">Learn to <strong>remove</strong>, <strong>insert</strong>, and master arrays in Swift!</p>
+    <div class="hero-badges">
+      <span class="badge" style="color:var(--accent-red);">❌ remove(at:)</span>
+      <span class="badge" style="color:var(--accent-green);">📌 insert(_:at:)</span>
+      <span class="badge" style="color:var(--accent-yellow);">⏱ 40 min</span>
+    </div>
+    <br>
+    <div style="margin-top:12px;">
+      <div class="section-label" style="margin-bottom:20px;">🎯 Learning Objectives</div>
+      <div style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center; max-width:650px; margin:0 auto;">
+        <span class="badge" style="color:var(--accent-blue);">Use remove(at:) to delete items</span>
+        <span class="badge" style="color:var(--accent-purple);">Use insert(_:at:) to add items</span>
+        <span class="badge" style="color:var(--accent-orange);">Understand index shifting</span>
+        <span class="badge" style="color:var(--accent-green);">Trace code step by step</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ WARM UP ═══════════════ -->
+<section class="section" id="warmup">
+  <div class="section-label">🔥 Warm Up · 5 minutes</div>
+  <div class="section-title">Spot the Bug! 🐛</div>
+  <p style="color:var(--text-secondary); margin-bottom:24px;">Each code example has <strong>ONE</strong> mistake. Can you find it? Click "Show Fix" to check your answer.</p>
+
+  <div class="bug-card">
+    <div style="font-family:'Fredoka',sans-serif; font-weight:600; color:var(--accent-pink); margin-bottom:12px;">Bug #1</div>
+    <div class="code-block">
+      <span class="line"><span class="kw">var</span> gems = [<span class="str">"red"</span>, <span class="str">"blue"</span>, <span class="str">"green"</span>]</span>
+      <span class="line"><span class="fn">print</span>(gems[<span class="num">3</span>])   <span class="cmt">// 🐛 BUG!</span></span>
+    </div>
+    <button class="btn btn-sm btn-primary" onclick="toggleBugReveal(this)">Show Fix ✨</button>
+    <div class="bug-reveal">
+      ✅ <strong>Index 3 does not exist!</strong> The array has 3 items, so the last index is <code>2</code>.<br>
+      Fix: <code style="color:var(--accent-green);">gems[2]</code> → returns <code>"green"</code>
+    </div>
+  </div>
+
+  <div class="bug-card">
+    <div style="font-family:'Fredoka',sans-serif; font-weight:600; color:var(--accent-pink); margin-bottom:12px;">Bug #2</div>
+    <div class="code-block">
+      <span class="line"><span class="kw">var</span> moves = [<span class="str">"jump"</span>, <span class="str">"run"</span>]</span>
+      <span class="line">moves.<span class="fn">count</span> = <span class="num">3</span>   <span class="cmt">// 🐛 BUG!</span></span>
+    </div>
+    <button class="btn btn-sm btn-primary" onclick="toggleBugReveal(this)">Show Fix ✨</button>
+    <div class="bug-reveal">
+      ✅ <strong><code>.count</code> is read-only!</strong> You cannot set it. It only tells you the number of items.<br>
+      Use <code style="color:var(--accent-green);">moves.append("walk")</code> to add items instead.
+    </div>
+  </div>
+
+  <div class="bug-card">
+    <div style="font-family:'Fredoka',sans-serif; font-weight:600; color:var(--accent-pink); margin-bottom:12px;">Bug #3</div>
+    <div class="code-block">
+      <span class="line"><span class="kw">var</span> list = [<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>]</span>
+      <span class="line">list.<span class="fn">Append</span>(<span class="str">"d"</span>)  <span class="cmt">// 🐛 BUG!</span></span>
+    </div>
+    <button class="btn btn-sm btn-primary" onclick="toggleBugReveal(this)">Show Fix ✨</button>
+    <div class="bug-reveal">
+      ✅ <strong>Wrong capital letter!</strong> Swift is case-sensitive.<br>
+      Fix: <code style="color:var(--accent-green);">list.append("d")</code> — lowercase "a"
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ REMOVE ═══════════════ -->
+<section class="section" id="remove">
+  <div class="section-label">📖 Focused Instruction</div>
+  <div class="section-title">Removing Items: <span style="color:var(--accent-red);">remove(at:)</span></div>
+
+  <div class="card">
+    <h3 style="font-family:'Fredoka',sans-serif; margin-bottom:8px;">Syntax</h3>
+    <div class="code-block">
+      <span class="line">arrayName.<span class="fn">remove</span>(<span class="op">at:</span> index)</span>
+    </div>
+    <p style="color:var(--text-secondary);">This removes the item at the given index number. All items after it <strong>shift left</strong> by one.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="font-family:'Fredoka',sans-serif; margin-bottom:16px;">🎬 Interactive Demo — Watch remove(at: 1)</h3>
+    <p style="color:var(--text-secondary); margin-bottom:16px; font-size:14px;">Click the button to see what happens when we remove the item at index 1.</p>
+
+    <div style="font-family:'Fredoka',sans-serif; font-weight:600; color:var(--accent-blue); margin-bottom:8px;">BEFORE:</div>
+    <div class="array-vis" id="removeDemo">
+      <div class="array-cell"><div class="array-cell-val">"move"</div><div class="array-cell-idx">[0]</div></div>
+      <div class="array-cell"><div class="array-cell-val">"jump"</div><div class="array-cell-idx">[1]</div></div>
+      <div class="array-cell"><div class="array-cell-val">"fly"</div><div class="array-cell-idx">[2]</div></div>
+      <div class="array-cell"><div class="array-cell-val">"run"</div><div class="array-cell-idx">[3]</div></div>
+    </div>
+    <div class="trace-controls">
+      <button class="btn btn-sm btn-primary" id="removeDemoBtn" onclick="runRemoveDemo()">▶ Run remove(at: 1)</button>
+      <button class="btn btn-sm btn-blue" onclick="resetRemoveDemo()">↺ Reset</button>
+    </div>
+    <div class="trace-output" id="removeDemoOutput" style="color:var(--text-muted);">Click ▶ to see the animation...</div>
+  </div>
+
+  <div class="card">
+    <h3 style="font-family:'Fredoka',sans-serif; margin-bottom:16px;">📝 Code Trace Animation</h3>
+    <div class="code-block" id="removeTraceCode">
+      <span class="line" data-step="0"><span class="code-line-num">1</span><span class="kw">var</span> moves = [<span class="str">"move"</span>, <span class="str">"jump"</span>, <span class="str">"fly"</span>, <span class="str">"run"</span>]</span>
+      <span class="line" data-step="1"><span class="code-line-num">2</span>moves.<span class="fn">remove</span>(<span class="op">at:</span> <span class="num">1</span>)   <span class="cmt">// removes "jump"</span></span>
+      <span class="line" data-step="2"><span class="code-line-num">3</span><span class="fn">print</span>(moves)         <span class="cmt">// ["move", "fly", "run"]</span></span>
+      <span class="line" data-step="3"><span class="code-line-num">4</span><span class="fn">print</span>(moves.<span class="fn">count</span>)   <span class="cmt">// 3</span></span>
+      <span class="line" data-step="4"><span class="code-line-num">5</span><span class="fn">print</span>(moves[<span class="num">1</span>])      <span class="cmt">// "fly" (NOT "jump"!)</span></span>
+    </div>
+    <div class="trace-controls">
+      <button class="btn btn-sm btn-blue" id="removeTraceBtn" onclick="stepRemoveTrace()">▶ Step Through</button>
+      <button class="btn btn-sm btn-purple" onclick="resetRemoveTrace()">↺ Reset</button>
+      <span id="removeTraceStatus" style="color:var(--text-muted); font-size:13px;"></span>
+    </div>
+    <div class="array-vis" id="removeTraceArray"></div>
+    <div class="trace-output" id="removeTraceOutput"></div>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--accent-yellow); background:rgba(251,191,36,0.05);">
+    <h3 style="font-family:'Fredoka',sans-serif; color:var(--accent-yellow);">⚠️ Key Point!</h3>
+    <p style="margin-top:8px;">After removing an item, all items <strong>after it</strong> shift left by one position. The indexes <strong>change</strong> after remove!</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ INSERT ═══════════════ -->
+<section class="section" id="insert">
+  <div class="section-label">📖 Focused Instruction</div>
+  <div class="section-title">Inserting Items: <span style="color:var(--accent-green);">insert(_:at:)</span></div>
+
+  <div class="card">
+    <h3 style="font-family:'Fredoka',sans-serif; margin-bottom:8px;">Syntax</h3>
+    <div class="code-block">
+      <span class="line">arrayName.<span class="fn">insert</span>(<span class="str">"item"</span>, <span class="op">at:</span> index)</span>
+    </div>
+    <p style="color:var(--text-secondary);">This puts a new item at the given index. All items at or after that position <strong>shift right</strong>.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="font-family:'Fredoka',sans-serif; margin-bottom:16px;">🎬 Interactive Demo — Watch insert("portal", at: 1)</h3>
+    <p style="color:var(--text-secondary); margin-bottom:16px; font-size:14px;">Click the button to see what happens when we insert at index 1.</p>
+
+    <div style="font-family:'Fredoka',sans-serif; font-weight:600; color:var(--accent-blue); margin-bottom:8px;">BEFORE:</div>
+    <div class="array-vis" id="insertDemo">
+      <div class="array-cell"><div class="array-cell-val">"jump"</div><div class="array-cell-idx">[0]</div></div>
+      <div class="array-cell"><div class="array-cell-val">"fly"</div><div class="array-cell-idx">[1]</div></div>
+      <div class="array-cell"><div class="array-cell-val">"run"</div><div class="array-cell-idx">[2]</div></div>
+    </div>
+    <div class="trace-controls">
+      <button class="btn btn-sm btn-green" id="insertDemoBtn" onclick="runInsertDemo()">▶ Run insert("portal", at: 1)</button>
+      <button class="btn btn-sm btn-blue" onclick="resetInsertDemo()">↺ Reset</button>
+    </div>
+    <div class="trace-output" id="insertDemoOutput" style="color:var(--text-muted);">Click ▶ to see the animation...</div>
+  </div>
+
+  <div class="card">
+    <h3 style="font-family:'Fredoka',sans-serif; margin-bottom:16px;">📝 Code Trace Animation</h3>
+    <div class="code-block" id="insertTraceCode">
+      <span class="line" data-step="0"><span class="code-line-num">1</span><span class="kw">var</span> gems = [<span class="str">"jump"</span>, <span class="str">"fly"</span>, <span class="str">"run"</span>]</span>
+      <span class="line" data-step="1"><span class="code-line-num">2</span>gems.<span class="fn">insert</span>(<span class="str">"portal"</span>, <span class="op">at:</span> <span class="num">1</span>)</span>
+      <span class="line" data-step="2"><span class="code-line-num">3</span><span class="fn">print</span>(gems)        <span class="cmt">// ["jump","portal","fly","run"]</span></span>
+      <span class="line" data-step="3"><span class="code-line-num">4</span><span class="fn">print</span>(gems.<span class="fn">count</span>)  <span class="cmt">// 4</span></span>
+      <span class="line" data-step="4"><span class="code-line-num">5</span><span class="fn">print</span>(gems[<span class="num">1</span>])     <span class="cmt">// "portal"</span></span>
+    </div>
+    <div class="trace-controls">
+      <button class="btn btn-sm btn-blue" id="insertTraceBtn" onclick="stepInsertTrace()">▶ Step Through</button>
+      <button class="btn btn-sm btn-purple" onclick="resetInsertTrace()">↺ Reset</button>
+      <span id="insertTraceStatus" style="color:var(--text-muted); font-size:13px;"></span>
+    </div>
+    <div class="array-vis" id="insertTraceArray"></div>
+    <div class="trace-output" id="insertTraceOutput"></div>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--accent-blue); background:rgba(78,205,196,0.05);">
+    <h3 style="font-family:'Fredoka',sans-serif; color:var(--accent-blue);">💡 Remember</h3>
+    <p style="margin-top:8px;"><code>insert()</code> <strong>pushes</strong> other items to the right. <code>append()</code> only adds to the <strong>END</strong>.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ REVIEW ═══════════════ -->
+<section class="section" id="review">
+  <div class="section-label">📖 Quick Review</div>
+  <div class="section-title">All 5 Array Features</div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(78,205,196,0.15);">🔍</div>
+      <h3>array[index]</h3>
+      <p style="color:var(--text-secondary); font-size:14px; margin-bottom:10px;">Get one item by its position number</p>
+      <code>gems[0] → "red"</code>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(168,85,247,0.15);">🔢</div>
+      <h3>.count</h3>
+      <p style="color:var(--text-secondary); font-size:14px; margin-bottom:10px;">Count how many items are in the array</p>
+      <code>gems.count → 3</code>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(34,197,94,0.15);">➕</div>
+      <h3>.append(item)</h3>
+      <p style="color:var(--text-secondary); font-size:14px; margin-bottom:10px;">Add a new item to the END</p>
+      <code>gems.append("gold")</code>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(239,68,68,0.15);">❌</div>
+      <h3>.remove(at:)</h3>
+      <p style="color:var(--text-secondary); font-size:14px; margin-bottom:10px;">Remove item at a specific index</p>
+      <code>gems.remove(at: 1)</code>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(255,107,53,0.15);">📌</div>
+      <h3>.insert(_:at:)</h3>
+      <p style="color:var(--text-secondary); font-size:14px; margin-bottom:10px;">Add item at a specific position</p>
+      <code>gems.insert("new", at: 0)</code>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ MISTAKES ═══════════════ -->
+<section class="section" id="mistakes">
+  <div class="section-label">⚠️ Watch Out</div>
+  <div class="section-title">Common Beginner Mistakes</div>
+
+  <div class="features-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+    <div class="card" style="border-left:4px solid var(--accent-red);">
+      <div style="font-family:'JetBrains Mono',monospace; color:var(--accent-red); margin-bottom:8px; font-size:14px;">❌ gems[4] <span class="cmt">// only 4 items</span></div>
+      <p style="font-size:14px; color:var(--text-secondary);">Index out of range! For 4 items, max index = 3 (start from 0).</p>
+      <div style="font-family:'JetBrains Mono',monospace; color:var(--accent-green); margin-top:8px; font-size:14px;">✅ gems[3]</div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--accent-red);">
+      <div style="font-family:'JetBrains Mono',monospace; color:var(--accent-red); margin-bottom:8px; font-size:14px;">❌ gems.count = 5</div>
+      <p style="font-size:14px; color:var(--text-secondary);"><code>.count</code> is read-only. You can't change it.</p>
+      <div style="font-family:'JetBrains Mono',monospace; color:var(--accent-green); margin-top:8px; font-size:14px;">✅ gems.append("x")</div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--accent-red);">
+      <div style="font-family:'JetBrains Mono',monospace; color:var(--accent-red); margin-bottom:8px; font-size:14px;">❌ gems.remove(4)</div>
+      <p style="font-size:14px; color:var(--text-secondary);">Must write <code>at:</code> before the index number.</p>
+      <div style="font-family:'JetBrains Mono',monospace; color:var(--accent-green); margin-top:8px; font-size:14px;">✅ gems.remove(at: 4)</div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--accent-red);">
+      <div style="font-family:'JetBrains Mono',monospace; color:var(--accent-red); margin-bottom:8px; font-size:14px;">❌ gems.Insert("x", at: 0)</div>
+      <p style="font-size:14px; color:var(--text-secondary);">Capital "I"! Swift is case-sensitive.</p>
+      <div style="font-family:'JetBrains Mono',monospace; color:var(--accent-green); margin-top:8px; font-size:14px;">✅ gems.insert("x", at: 0)</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ CHALLENGE ═══════════════ -->
+<section class="section" id="challenge">
+  <div class="section-label">👫 Pair Work · 8 minutes</div>
+  <div class="section-title">Swift World Builder Challenge</div>
+  <p style="color:var(--text-secondary); margin-bottom:24px;">Predict what the code does at each step. Click each step to check your prediction!</p>
+
+  <div class="card">
+    <div class="code-block">
+      <span class="line"><span class="kw">var</span> world = [<span class="str">"grass"</span>, <span class="str">"stone"</span>, <span class="str">"water"</span>]</span>
+    </div>
+    <div class="array-vis" id="challengeArray"></div>
+
+    <div style="margin-top:20px;">
+      <div class="bug-card" id="cStep1">
+        <div style="font-family:'Fredoka',sans-serif; font-weight:600; color:var(--accent-orange);">Step 1: <code>world.append("lava")</code></div>
+        <p style="color:var(--text-secondary); font-size:14px; margin:8px 0;">🤔 What do you think world looks like now?</p>
+        <button class="btn btn-sm btn-primary" onclick="revealChallengeStep(1)">Check My Prediction</button>
+        <div class="bug-reveal" id="cReveal1">
+          <div class="array-vis" style="margin:8px 0;">
+            <div class="array-cell"><div class="array-cell-val">"grass"</div><div class="array-cell-idx">[0]</div></div>
+            <div class="array-cell"><div class="array-cell-val">"stone"</div><div class="array-cell-idx">[1]</div></div>
+            <div class="array-cell"><div class="array-cell-val">"water"</div><div class="array-cell-idx">[2]</div></div>
+            <div class="array-cell inserting"><div class="array-cell-val">"lava"</div><div class="array-cell-idx">[3]</div></div>
+          </div>
+          ✅ <code>"lava"</code> added to the END. Count: 4
+        </div>
+      </div>
+
+      <div class="bug-card" id="cStep2">
+        <div style="font-family:'Fredoka',sans-serif; font-weight:600; color:var(--accent-green);">Step 2: <code>world.insert("cloud", at: 1)</code></div>
+        <p style="color:var(--text-secondary); font-size:14px; margin:8px 0;">🤔 Where does "cloud" go?</p>
+        <button class="btn btn-sm btn-green" onclick="revealChallengeStep(2)">Check My Prediction</button>
+        <div class="bug-reveal" id="cReveal2">
+          <div class="array-vis" style="margin:8px 0;">
+            <div class="array-cell"><div class="array-cell-val">"grass"</div><div class="array-cell-idx">[0]</div></div>
+            <div class="array-cell inserting"><div class="array-cell-val">"cloud"</div><div class="array-cell-idx">[1]</div></div>
+            <div class="array-cell"><div class="array-cell-val">"stone"</div><div class="array-cell-idx">[2]</div></div>
+            <div class="array-cell"><div class="array-cell-val">"water"</div><div class="array-cell-idx">[3]</div></div>
+            <div class="array-cell"><div class="array-cell-val">"lava"</div><div class="array-cell-idx">[4]</div></div>
+          </div>
+          ✅ <code>"cloud"</code> inserted at [1]. Others shifted right. Count: 5
+        </div>
+      </div>
+
+      <div class="bug-card" id="cStep3">
+        <div style="font-family:'Fredoka',sans-serif; font-weight:600; color:var(--accent-red);">Step 3: <code>world.remove(at: 3)</code></div>
+        <p style="color:var(--text-secondary); font-size:14px; margin:8px 0;">🤔 What gets removed?</p>
+        <button class="btn btn-sm btn-primary" onclick="revealChallengeStep(3)">Check My Prediction</button>
+        <div class="bug-reveal" id="cReveal3">
+          <div class="array-vis" style="margin:8px 0;">
+            <div class="array-cell"><div class="array-cell-val">"grass"</div><div class="array-cell-idx">[0]</div></div>
+            <div class="array-cell"><div class="array-cell-val">"cloud"</div><div class="array-cell-idx">[1]</div></div>
+            <div class="array-cell"><div class="array-cell-val">"stone"</div><div class="array-cell-idx">[2]</div></div>
+            <div class="array-cell"><div class="array-cell-val">"lava"</div><div class="array-cell-idx">[3]</div></div>
+          </div>
+          ✅ <code>"water"</code> (at index 3) removed! "lava" shifted left. Count: 4
+        </div>
+      </div>
+
+      <div class="bug-card" id="cStep4">
+        <div style="font-family:'Fredoka',sans-serif; font-weight:600; color:var(--accent-purple);">Step 4: <code>world.append("ice")</code></div>
+        <p style="color:var(--text-secondary); font-size:14px; margin:8px 0;">🤔 What is world.count now?</p>
+        <button class="btn btn-sm btn-purple" onclick="revealChallengeStep(4)">Check My Prediction</button>
+        <div class="bug-reveal" id="cReveal4">
+          <div class="array-vis" style="margin:8px 0;">
+            <div class="array-cell"><div class="array-cell-val">"grass"</div><div class="array-cell-idx">[0]</div></div>
+            <div class="array-cell"><div class="array-cell-val">"cloud"</div><div class="array-cell-idx">[1]</div></div>
+            <div class="array-cell"><div class="array-cell-val">"stone"</div><div class="array-cell-idx">[2]</div></div>
+            <div class="array-cell"><div class="array-cell-val">"lava"</div><div class="array-cell-idx">[3]</div></div>
+            <div class="array-cell inserting"><div class="array-cell-val">"ice"</div><div class="array-cell-idx">[4]</div></div>
+          </div>
+          ✅ <code>world.count = 5</code> — Five items total!
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ TRACING ═══════════════ -->
+<section class="section" id="tracing">
+  <div class="section-label">✏️ Independent Practice</div>
+  <div class="section-title">Code Tracing Challenge</div>
+  <p style="color:var(--text-secondary); margin-bottom:24px;">Step through each line and watch the array change. Try to predict each step before clicking!</p>
+
+  <div class="card">
+    <div class="code-block" id="tracingCode">
+      <span class="line" data-step="0"><span class="code-line-num">1</span><span class="kw">var</span> items = [<span class="str">"sword"</span>, <span class="str">"shield"</span>, <span class="str">"bow"</span>, <span class="str">"arrow"</span>]</span>
+      <span class="line" data-step="1"><span class="code-line-num">2</span>items.<span class="fn">remove</span>(<span class="op">at:</span> <span class="num">2</span>)            <span class="cmt">// A</span></span>
+      <span class="line" data-step="2"><span class="code-line-num">3</span>items.<span class="fn">insert</span>(<span class="str">"staff"</span>, <span class="op">at:</span> <span class="num">1</span>)  <span class="cmt">// B</span></span>
+      <span class="line" data-step="3"><span class="code-line-num">4</span>items.<span class="fn">append</span>(<span class="str">"potion"</span>)        <span class="cmt">// C</span></span>
+    </div>
+
+    <div class="trace-controls">
+      <button class="btn btn-sm btn-blue" id="tracingBtn" onclick="stepTracing()">▶ Step Through</button>
+      <button class="btn btn-sm btn-purple" onclick="resetTracing()">↺ Reset</button>
+      <span id="tracingStatus" style="color:var(--text-muted); font-size:13px;"></span>
+    </div>
+
+    <div style="font-family:'Fredoka',sans-serif; font-weight:600; color:var(--accent-blue); margin:16px 0 8px;">Array State:</div>
+    <div class="array-vis" id="tracingArray"></div>
+    <div class="trace-output" id="tracingOutput"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ DRAG & DROP MATCHING ═══════════════ -->
+<section class="section" id="matching">
+  <div class="section-label">🧩 Interactive Activity</div>
+  <div class="section-title">Match the Method!</div>
+  <p style="color:var(--text-secondary); margin-bottom:24px;">Drag each description to the correct Swift method. Test your understanding!</p>
+
+  <div class="card">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;" id="matchingGame">
+      <div>
+        <div style="font-family:'Fredoka',sans-serif; font-weight:600; color:var(--accent-purple); margin-bottom:12px;">Descriptions (drag these):</div>
+        <div id="dragSource" class="drag-zone" style="min-height:200px;">
+          <div class="drag-item" draggable="true" data-match="count" id="d1">Tells how many items</div>
+          <div class="drag-item" draggable="true" data-match="append" id="d2">Adds to the END</div>
+          <div class="drag-item" draggable="true" data-match="remove" id="d3">Deletes at a position</div>
+          <div class="drag-item" draggable="true" data-match="insert" id="d4">Adds at any position</div>
+          <div class="drag-item" draggable="true" data-match="index" id="d5">Gets one item by [number]</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'Fredoka',sans-serif; font-weight:600; color:var(--accent-green); margin-bottom:12px;">Methods (drop here):</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div>
+            <code style="color:var(--accent-blue); font-family:'JetBrains Mono',monospace; font-size:14px;">array[index]</code>
+            <div class="drag-zone" data-accept="index" style="min-height:50px;"></div>
+          </div>
+          <div>
+            <code style="color:var(--accent-blue); font-family:'JetBrains Mono',monospace; font-size:14px;">.count</code>
+            <div class="drag-zone" data-accept="count" style="min-height:50px;"></div>
+          </div>
+          <div>
+            <code style="color:var(--accent-blue); font-family:'JetBrains Mono',monospace; font-size:14px;">.append(item)</code>
+            <div class="drag-zone" data-accept="append" style="min-height:50px;"></div>
+          </div>
+          <div>
+            <code style="color:var(--accent-blue); font-family:'JetBrains Mono',monospace; font-size:14px;">.remove(at:)</code>
+            <div class="drag-zone" data-accept="remove" style="min-height:50px;"></div>
+          </div>
+          <div>
+            <code style="color:var(--accent-blue); font-family:'JetBrains Mono',monospace; font-size:14px;">.insert(_:at:)</code>
+            <div class="drag-zone" data-accept="insert" style="min-height:50px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="matchResult" style="margin-top:16px;"></div>
+    <div class="trace-controls" style="margin-top:12px;">
+      <button class="btn btn-sm btn-green" onclick="checkMatching()">✅ Check Answers</button>
+      <button class="btn btn-sm btn-purple" onclick="resetMatching()">↺ Reset</button>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ EXIT TICKET ═══════════════ -->
+<section class="section" id="exit-ticket" style="max-width:1080px;">
+  <div class="section-label">✅ Exit Ticket</div>
+  <div class="section-title">Test Your Knowledge!</div>
+  <p style="color:var(--text-secondary); margin-bottom:24px;">Answer these questions before you leave. The code stays visible on the left as you scroll!</p>
+
+  <div class="exit-ticket-layout">
+    <!-- STICKY CODE PANEL -->
+    <div class="exit-ticket-code-panel">
+      <div class="exit-ticket-code-label"><span class="pulse-dot"></span> Reference Code</div>
+      <div class="code-block">
+        <span class="line"><span class="kw">var</span> portals = [<span class="str">"red"</span>, <span class="str">"blue"</span>, <span class="str">"green"</span>]</span>
+        <span class="line" style="margin-top:4px;">portals.<span class="fn">insert</span>(<span class="str">"gold"</span>, <span class="op">at:</span> <span class="num">0</span>)</span>
+        <span class="line">portals.<span class="fn">remove</span>(<span class="op">at:</span> <span class="num">2</span>)</span>
+      </div>
+      <div style="margin-top:14px; padding:14px; background:var(--bg-card2); border-radius:var(--radius-sm); border:1px solid rgba(255,255,255,0.06);">
+        <div style="font-family:'Fredoka',sans-serif; font-size:12px; color:var(--accent-yellow); margin-bottom:8px;">📋 Step-by-step:</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:12px; line-height:2; color:var(--text-secondary);">
+          <div>Start: [<span class="str">"red"</span>,<span class="str">"blue"</span>,<span class="str">"green"</span>]</div>
+          <div style="color:var(--accent-green);">+insert → [<span class="str">"gold"</span>,<span class="str">"red"</span>,<span class="str">"blue"</span>,<span class="str">"green"</span>]</div>
+          <div style="color:var(--accent-red);">−remove → [<span class="str">"gold"</span>,<span class="str">"red"</span>,<span class="str">"green"</span>]</div>
+        </div>
+      </div>
+      <div style="margin-top:10px; text-align:center;">
+        <span id="quizProgress" style="font-family:'Fredoka',sans-serif; font-size:13px; color:var(--text-muted);">0 / 6 answered</span>
+      </div>
+    </div>
+
+    <!-- QUESTIONS COLUMN -->
+    <div class="exit-ticket-questions">
+      <!-- Q1 -->
+      <div class="card" id="q1">
+        <div style="font-family:'Fredoka',sans-serif; font-weight:700; color:var(--accent-orange); margin-bottom:4px;">Question 1 of 6</div>
+        <p style="font-weight:700; margin-bottom:4px;">After <code>insert("gold", at: 0)</code>, what is <code>portals[0]</code>?</p>
+        <button class="hint-btn" onclick="toggleHint(this)">💡 Need a hint?</button>
+        <div class="hint-text"><code>insert(_:at: 0)</code> puts the new item at the very beginning of the array.</div>
+        <button class="quiz-option" onclick="checkAnswer(this,'q1','correct')">A) "gold"</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q1','wrong')">B) "red"</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q1','wrong')">C) "blue"</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q1','wrong')">D) "green"</button>
+        <div class="feedback-box feedback-correct" id="q1-correct">🎉 Correct! <code>"gold"</code> is inserted at index 0, pushing everything else right.</div>
+        <div class="feedback-box feedback-wrong" id="q1-wrong">❌ Not quite. <code>insert("gold", at: 0)</code> places "gold" at the very beginning. The answer is A) "gold".</div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="card" id="q2">
+        <div style="font-family:'Fredoka',sans-serif; font-weight:700; color:var(--accent-orange); margin-bottom:4px;">Question 2 of 6</div>
+        <p style="font-weight:700; margin-bottom:4px;">After <code>remove(at: 2)</code>, what is <code>portals.count</code>?</p>
+        <button class="hint-btn" onclick="toggleHint(this)">💡 Need a hint?</button>
+        <div class="hint-text">After insert, we have 4 items. Then remove takes one away. 4 − 1 = ?</div>
+        <button class="quiz-option" onclick="checkAnswer(this,'q2','wrong')">A) 2</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q2','correct')">B) 3</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q2','wrong')">C) 4</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q2','wrong')">D) 5</button>
+        <div class="feedback-box feedback-correct" id="q2-correct">🎉 Correct! We started with 3, inserted one (4), then removed one (3).</div>
+        <div class="feedback-box feedback-wrong" id="q2-wrong">❌ Not quite. Start: 3 items → insert makes 4 → remove makes 3. The answer is B) 3.</div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="card" id="q3">
+        <div style="font-family:'Fredoka',sans-serif; font-weight:700; color:var(--accent-orange); margin-bottom:4px;">Question 3 of 6</div>
+        <p style="font-weight:700; margin-bottom:4px;">What is <code>portals[portals.count - 1]</code> after all changes?</p>
+        <button class="hint-btn" onclick="toggleHint(this)">💡 Need a hint?</button>
+        <div class="hint-text"><code>count - 1</code> gives you the LAST index. After all changes, the array is ["gold", "red", "green"].</div>
+        <button class="quiz-option" onclick="checkAnswer(this,'q3','wrong')">A) "red"</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q3','wrong')">B) "gold"</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q3','wrong')">C) "blue"</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q3','correct')">D) "green"</button>
+        <div class="feedback-box feedback-correct" id="q3-correct">🎉 Correct! The final array is ["gold", "red", "green"]. The last item is "green".</div>
+        <div class="feedback-box feedback-wrong" id="q3-wrong">❌ Not quite. After insert & remove: ["gold", "red", "green"]. count-1 = 2, so portals[2] = "green". Answer: D.</div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="card" id="q4">
+        <div style="font-family:'Fredoka',sans-serif; font-weight:700; color:var(--accent-orange); margin-bottom:4px;">Question 4 of 6</div>
+        <p style="font-weight:700; margin-bottom:4px;">Which is the <strong>correct</strong> syntax to add "gold" to the end?</p>
+        <button class="hint-btn" onclick="toggleHint(this)">💡 Need a hint?</button>
+        <div class="hint-text">Swift is case-sensitive! And <code>append()</code> uses only the item as a parameter — no <code>at:</code>.</div>
+        <button class="quiz-option" onclick="checkAnswer(this,'q4','wrong')">A) gems.Append("gold")</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q4','wrong')">B) gems.append("gold", at: 3)</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q4','wrong')">C) gems.add("gold")</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q4','correct')">D) gems.append("gold")</button>
+        <div class="feedback-box feedback-correct" id="q4-correct">🎉 Correct! <code>append()</code> — lowercase, one argument, adds to the end.</div>
+        <div class="feedback-box feedback-wrong" id="q4-wrong">❌ Not quite. The correct syntax is <code>gems.append("gold")</code> — lowercase "a", no "at:" parameter. Answer: D.</div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="card" id="q5">
+        <div style="font-family:'Fredoka',sans-serif; font-weight:700; color:var(--accent-orange); margin-bottom:4px;">Question 5 of 6</div>
+        <p style="font-weight:700; margin-bottom:4px;"><code>var g = ["a","b","c"]</code> — After <code>g.remove(at: 1)</code>, what is <code>g.count</code>?</p>
+        <button class="hint-btn" onclick="toggleHint(this)">💡 Need a hint?</button>
+        <div class="hint-text">We start with 3 items and remove one. How many are left?</div>
+        <button class="quiz-option" onclick="checkAnswer(this,'q5','correct')">A) 2</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q5','wrong')">B) 3</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q5','wrong')">C) 1</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q5','wrong')">D) 0</button>
+        <div class="feedback-box feedback-correct" id="q5-correct">🎉 Correct! 3 items minus 1 removed = 2 items left.</div>
+        <div class="feedback-box feedback-wrong" id="q5-wrong">❌ Not quite. We had ["a","b","c"] (3 items), removed one → 2 items left. Answer: A.</div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="card" id="q6">
+        <div style="font-family:'Fredoka',sans-serif; font-weight:700; color:var(--accent-orange); margin-bottom:4px;">Question 6 of 6</div>
+        <p style="font-weight:700; margin-bottom:4px;"><code>insert("x", at: 2)</code> puts "x" at which position?</p>
+        <button class="hint-btn" onclick="toggleHint(this)">💡 Need a hint?</button>
+        <div class="hint-text">The <code>at:</code> parameter tells you exactly where the new item goes!</div>
+        <button class="quiz-option" onclick="checkAnswer(this,'q6','wrong')">A) Position 0 (beginning)</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q6','correct')">B) Position 2</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q6','wrong')">C) Position 1</button>
+        <button class="quiz-option" onclick="checkAnswer(this,'q6','wrong')">D) The end of the array</button>
+        <div class="feedback-box feedback-correct" id="q6-correct">🎉 Correct! <code>insert(_:at: 2)</code> places the item exactly at index 2.</div>
+        <div class="feedback-box feedback-wrong" id="q6-wrong">❌ Not quite. <code>at: 2</code> means position 2. Answer: B.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCORE -->
+  <div class="score-display" id="scoreDisplay">
+    <div class="score-number" id="scoreNumber">0/6</div>
+    <p style="font-family:'Fredoka',sans-serif; font-size:20px; margin-top:8px;" id="scoreMessage"></p>
+    <button class="btn btn-primary" style="margin-top:16px;" onclick="resetQuiz()">🔄 Try Again</button>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ FINAL ═══════════════ -->
+<section class="section" style="text-align:center; padding-bottom:120px;">
+  <div style="font-size:64px; margin-bottom:16px;">🎉</div>
+  <div class="section-title">You Did It!</div>
+  <p style="color:var(--text-secondary); max-width:550px; margin:0 auto 32px;">You learned 5 important array features in Swift. Keep practicing in Swift Playgrounds!</p>
+
+  <div class="features-grid" style="max-width:700px; margin:0 auto;">
+    <div class="feature-card" style="text-align:center;">
+      <div style="font-size:32px;">🔍</div>
+      <h3>array[index]</h3>
+      <p style="color:var(--text-secondary); font-size:13px;">Read one item</p>
+    </div>
+    <div class="feature-card" style="text-align:center;">
+      <div style="font-size:32px;">🔢</div>
+      <h3>.count</h3>
+      <p style="color:var(--text-secondary); font-size:13px;">Count all items</p>
+    </div>
+    <div class="feature-card" style="text-align:center;">
+      <div style="font-size:32px;">➕</div>
+      <h3>.append()</h3>
+      <p style="color:var(--text-secondary); font-size:13px;">Add to the end</p>
+    </div>
+    <div class="feature-card" style="text-align:center;">
+      <div style="font-size:32px;">❌</div>
+      <h3>.remove(at:)</h3>
+      <p style="color:var(--text-secondary); font-size:13px;">Remove one item</p>
+    </div>
+    <div class="feature-card" style="text-align:center;">
+      <div style="font-size:32px;">📌</div>
+      <h3>.insert(_:at:)</h3>
+      <p style="color:var(--text-secondary); font-size:13px;">Add at any position</p>
+    </div>
+  </div>
+
+  <div class="card" style="max-width:600px; margin:32px auto 0; border-left:4px solid var(--accent-orange);">
+    <h3 style="font-family:'Fredoka',sans-serif; color:var(--accent-orange);">⭐ Bonus Challenge</h3>
+    <p style="margin-top:8px; color:var(--text-secondary);">Write code that creates an array of 3 gems, adds 2 more, removes the second one, then prints the count and last item. Can you do it? 🚀</p>
+  </div>
+</section>
+
+<script>
+// ─── PARTICLES ───
+(function(){
+  const c = document.getElementById('particles');
+  const colors = ['#ff6b35','#4ecdc4','#a855f7','#ff6b9d','#22c55e','#fbbf24'];
+  for(let i=0;i<25;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const sz = Math.random()*8+4;
+    p.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:${colors[i%colors.length]};animation-delay:${Math.random()*6}s;animation-duration:${4+Math.random()*4}s;opacity:${0.3+Math.random()*0.4};`;
+    c.appendChild(p);
+  }
+})();
+
+// ─── PROGRESS BAR ───
+window.addEventListener('scroll',()=>{
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('progressBar').style.width = (window.scrollY/h*100)+'%';
+});
+
+// ─── HELPERS ───
+function renderArray(container, arr, opts={}){
+  container.innerHTML='';
+  arr.forEach((v,i)=>{
+    const cell = document.createElement('div');
+    cell.className='array-cell'+(opts.highlight===i?' '+(opts.highlightClass||'inserting'):'');
+    cell.innerHTML=`<div class="array-cell-val">${v}</div><div class="array-cell-idx">[${i}]</div>`;
+    container.appendChild(cell);
+  });
+}
+
+// ─── BUG REVEAL ───
+function toggleBugReveal(btn){
+  const r = btn.nextElementSibling;
+  r.classList.toggle('show');
+  btn.textContent = r.classList.contains('show') ? 'Hide Fix' : 'Show Fix ✨';
+}
+
+// ─── HINT ───
+function toggleHint(btn){
+  const h = btn.nextElementSibling;
+  h.classList.toggle('show');
+  btn.textContent = h.classList.contains('show') ? '💡 Hide hint' : '💡 Need a hint?';
+}
+
+// ─── REMOVE DEMO ───
+function runRemoveDemo(){
+  const c = document.getElementById('removeDemo');
+  const out = document.getElementById('removeDemoOutput');
+  const btn = document.getElementById('removeDemoBtn');
+  btn.disabled=true;
+  // Mark item to remove
+  c.children[1].classList.add('removing');
+  out.innerHTML='<span style="color:var(--accent-red);">❌ Removing "jump" at index [1]...</span>';
+  setTimeout(()=>{
+    c.children[1].style.animation='slideOut 0.4s forwards';
+    setTimeout(()=>{
+      const arr = ['"move"','"fly"','"run"'];
+      renderArray(c, arr);
+      out.innerHTML='<span style="color:var(--accent-green);">✅ AFTER: ["move", "fly", "run"] — count: 3. Items shifted LEFT!</span>';
+    },400);
+  },800);
+}
+function resetRemoveDemo(){
+  const c = document.getElementById('removeDemo');
+  c.innerHTML=`
+    <div class="array-cell"><div class="array-cell-val">"move"</div><div class="array-cell-idx">[0]</div></div>
+    <div class="array-cell"><div class="array-cell-val">"jump"</div><div class="array-cell-idx">[1]</div></div>
+    <div class="array-cell"><div class="array-cell-val">"fly"</div><div class="array-cell-idx">[2]</div></div>
+    <div class="array-cell"><div class="array-cell-val">"run"</div><div class="array-cell-idx">[3]</div></div>`;
+  document.getElementById('removeDemoOutput').innerHTML='<span style="color:var(--text-muted);">Click ▶ to see the animation...</span>';
+  document.getElementById('removeDemoBtn').disabled=false;
+}
+
+// ─── INSERT DEMO ───
+function runInsertDemo(){
+  const c = document.getElementById('insertDemo');
+  const out = document.getElementById('insertDemoOutput');
+  const btn = document.getElementById('insertDemoBtn');
+  btn.disabled=true;
+  out.innerHTML='<span style="color:var(--accent-green);">📌 Inserting "portal" at index [1]...</span>';
+  setTimeout(()=>{
+    const arr = ['"jump"','"portal"','"fly"','"run"'];
+    renderArray(c, arr, {highlight:1, highlightClass:'inserting'});
+    out.innerHTML='<span style="color:var(--accent-green);">✅ AFTER: ["jump", "portal", "fly", "run"] — count: 4. Items shifted RIGHT!</span>';
+  },800);
+}
+function resetInsertDemo(){
+  const c = document.getElementById('insertDemo');
+  c.innerHTML=`
+    <div class="array-cell"><div class="array-cell-val">"jump"</div><div class="array-cell-idx">[0]</div></div>
+    <div class="array-cell"><div class="array-cell-val">"fly"</div><div class="array-cell-idx">[1]</div></div>
+    <div class="array-cell"><div class="array-cell-val">"run"</div><div class="array-cell-idx">[2]</div></div>`;
+  document.getElementById('insertDemoOutput').innerHTML='<span style="color:var(--text-muted);">Click ▶ to see the animation...</span>';
+  document.getElementById('insertDemoBtn').disabled=false;
+}
+
+// ─── REMOVE TRACE ───
+let removeTraceStep = -1;
+const removeTraceStates = [
+  {arr:['"move"','"jump"','"fly"','"run"'], out:'Array created with 4 items', status:'Line 1: Create array'},
+  {arr:['"move"','"fly"','"run"'], out:'Removed "jump" at [1]. Items shifted left!', status:'Line 2: remove(at: 1)', hl:null, hlc:''},
+  {arr:['"move"','"fly"','"run"'], out:'Output: ["move", "fly", "run"]', status:'Line 3: print(moves)'},
+  {arr:['"move"','"fly"','"run"'], out:'Output: 3', status:'Line 4: print(moves.count)'},
+  {arr:['"move"','"fly"','"run"'], out:'Output: "fly" — NOT "jump" anymore!', status:'Line 5: print(moves[1])', hl:1, hlc:'inserting'},
+];
+function stepRemoveTrace(){
+  removeTraceStep++;
+  if(removeTraceStep>=removeTraceStates.length){removeTraceStep=removeTraceStates.length-1;return;}
+  const s = removeTraceStates[removeTraceStep];
+  const lines = document.querySelectorAll('#removeTraceCode .line');
+  lines.forEach((l,i)=>{l.classList.remove('active','executed'); if(i<removeTraceStep)l.classList.add('executed'); if(i===removeTraceStep)l.classList.add('active');});
+  const c = document.getElementById('removeTraceArray');
+  renderArray(c, s.arr, s.hl!==undefined?{highlight:s.hl,highlightClass:s.hlc}:{});
+  document.getElementById('removeTraceOutput').innerHTML=`<span style="color:var(--accent-blue);">→ ${s.out}</span>`;
+  document.getElementById('removeTraceStatus').textContent=s.status;
+  if(removeTraceStep>=removeTraceStates.length-1) document.getElementById('removeTraceBtn').textContent='✅ Done';
+}
+function resetRemoveTrace(){
+  removeTraceStep=-1;
+  document.querySelectorAll('#removeTraceCode .line').forEach(l=>{l.classList.remove('active','executed');});
+  document.getElementById('removeTraceArray').innerHTML='';
+  document.getElementById('removeTraceOutput').innerHTML='';
+  document.getElementById('removeTraceStatus').textContent='';
+  document.getElementById('removeTraceBtn').textContent='▶ Step Through';
+}
+
+// ─── INSERT TRACE ───
+let insertTraceStep = -1;
+const insertTraceStates = [
+  {arr:['"jump"','"fly"','"run"'], out:'Array created with 3 items', status:'Line 1: Create array'},
+  {arr:['"jump"','"portal"','"fly"','"run"'], out:'Inserted "portal" at [1]. Others shifted right!', status:'Line 2: insert("portal", at: 1)', hl:1, hlc:'inserting'},
+  {arr:['"jump"','"portal"','"fly"','"run"'], out:'Output: ["jump","portal","fly","run"]', status:'Line 3: print(gems)'},
+  {arr:['"jump"','"portal"','"fly"','"run"'], out:'Output: 4', status:'Line 4: print(gems.count)'},
+  {arr:['"jump"','"portal"','"fly"','"run"'], out:'Output: "portal"', status:'Line 5: print(gems[1])', hl:1, hlc:'inserting'},
+];
+function stepInsertTrace(){
+  insertTraceStep++;
+  if(insertTraceStep>=insertTraceStates.length){insertTraceStep=insertTraceStates.length-1;return;}
+  const s = insertTraceStates[insertTraceStep];
+  const lines = document.querySelectorAll('#insertTraceCode .line');
+  lines.forEach((l,i)=>{l.classList.remove('active','executed'); if(i<insertTraceStep)l.classList.add('executed'); if(i===insertTraceStep)l.classList.add('active');});
+  const c = document.getElementById('insertTraceArray');
+  renderArray(c, s.arr, s.hl!==undefined?{highlight:s.hl,highlightClass:s.hlc}:{});
+  document.getElementById('insertTraceOutput').innerHTML=`<span style="color:var(--accent-blue);">→ ${s.out}</span>`;
+  document.getElementById('insertTraceStatus').textContent=s.status;
+  if(insertTraceStep>=insertTraceStates.length-1) document.getElementById('insertTraceBtn').textContent='✅ Done';
+}
+function resetInsertTrace(){
+  insertTraceStep=-1;
+  document.querySelectorAll('#insertTraceCode .line').forEach(l=>{l.classList.remove('active','executed');});
+  document.getElementById('insertTraceArray').innerHTML='';
+  document.getElementById('insertTraceOutput').innerHTML='';
+  document.getElementById('insertTraceStatus').textContent='';
+  document.getElementById('insertTraceBtn').textContent='▶ Step Through';
+}
+
+// ─── MAIN TRACING ───
+let tracingStep = -1;
+const tracingStates = [
+  {arr:['"sword"','"shield"','"bow"','"arrow"'], out:'Array created: ["sword","shield","bow","arrow"] — count: 4', status:'Line 1: Create array'},
+  {arr:['"sword"','"shield"','"arrow"'], out:'Step A: removed "bow" at [2]. "arrow" shifts to [2]. Count: 3', status:'Line 2: remove(at: 2)'},
+  {arr:['"sword"','"staff"','"shield"','"arrow"'], out:'Step B: inserted "staff" at [1]. Others shift right. Count: 4', status:'Line 3: insert("staff", at: 1)', hl:1, hlc:'inserting'},
+  {arr:['"sword"','"staff"','"shield"','"arrow"','"potion"'], out:'Step C: appended "potion" to end. Count: 5', status:'Line 4: append("potion")', hl:4, hlc:'inserting'},
+];
+function stepTracing(){
+  tracingStep++;
+  if(tracingStep>=tracingStates.length){tracingStep=tracingStates.length-1;return;}
+  const s = tracingStates[tracingStep];
+  const lines = document.querySelectorAll('#tracingCode .line');
+  lines.forEach((l,i)=>{l.classList.remove('active','executed'); if(i<tracingStep)l.classList.add('executed'); if(i===tracingStep)l.classList.add('active');});
+  const c = document.getElementById('tracingArray');
+  renderArray(c, s.arr, s.hl!==undefined?{highlight:s.hl,highlightClass:s.hlc}:{});
+  document.getElementById('tracingOutput').innerHTML=`<span style="color:var(--accent-blue);">→ ${s.out}</span>`;
+  document.getElementById('tracingStatus').textContent=s.status;
+  if(tracingStep>=tracingStates.length-1) document.getElementById('tracingBtn').textContent='✅ Done';
+}
+function resetTracing(){
+  tracingStep=-1;
+  document.querySelectorAll('#tracingCode .line').forEach(l=>{l.classList.remove('active','executed');});
+  document.getElementById('tracingArray').innerHTML='';
+  document.getElementById('tracingOutput').innerHTML='';
+  document.getElementById('tracingStatus').textContent='';
+  document.getElementById('tracingBtn').textContent='▶ Step Through';
+}
+
+// ─── CHALLENGE REVEAL ───
+function revealChallengeStep(n){
+  document.getElementById('cReveal'+n).classList.add('show');
+}
+
+// ─── DRAG & DROP MATCHING ───
+(function(){
+  let dragged = null;
+  document.querySelectorAll('.drag-item').forEach(item=>{
+    item.addEventListener('dragstart',e=>{dragged=item; e.dataTransfer.effectAllowed='move'; setTimeout(()=>item.style.opacity='0.4',0);});
+    item.addEventListener('dragend',()=>{item.style.opacity='1'; dragged=null;});
+  });
+  document.querySelectorAll('.drag-zone').forEach(zone=>{
+    zone.addEventListener('dragover',e=>{e.preventDefault(); zone.classList.add('over');});
+    zone.addEventListener('dragleave',()=>zone.classList.remove('over'));
+    zone.addEventListener('drop',e=>{
+      e.preventDefault(); zone.classList.remove('over');
+      if(dragged && zone.dataset.accept !== undefined){
+        // Only allow one item per drop zone (except source)
+        if(zone.children.length===0 || zone.id==='dragSource') zone.appendChild(dragged);
+      } else if(dragged && zone.id==='dragSource'){
+        zone.appendChild(dragged);
+      }
+    });
+  });
+})();
+
+function checkMatching(){
+  let correct=0, total=5;
+  document.querySelectorAll('.drag-zone[data-accept]').forEach(zone=>{
+    const item = zone.querySelector('.drag-item');
+    if(item && item.dataset.match===zone.dataset.accept){
+      zone.style.borderColor='var(--accent-green)';
+      zone.style.background='rgba(34,197,94,0.1)';
+      correct++;
+    } else if(item) {
+      zone.style.borderColor='var(--accent-red)';
+      zone.style.background='rgba(239,68,68,0.1)';
+    }
+  });
+  document.getElementById('matchResult').innerHTML=`<span style="font-family:'Fredoka',sans-serif; font-weight:700; color:${correct===total?'var(--accent-green)':'var(--accent-yellow)'};">${correct}/${total} correct ${correct===total?'🎉 Perfect!':'— try again!'}</span>`;
+}
+
+function resetMatching(){
+  const src = document.getElementById('dragSource');
+  document.querySelectorAll('.drag-zone[data-accept] .drag-item').forEach(item=>src.appendChild(item));
+  document.querySelectorAll('.drag-zone[data-accept]').forEach(zone=>{zone.style.borderColor='';zone.style.background='';});
+  document.getElementById('matchResult').innerHTML='';
+}
+
+// ─── QUIZ ───
+let quizScore = 0;
+let quizAnswered = 0;
+const totalQuestions = 6;
+
+function checkAnswer(btn, qid, result){
+  const card = document.getElementById(qid);
+  const opts = card.querySelectorAll('.quiz-option');
+  opts.forEach(o=>{o.classList.add('selected'); o.disabled=true;});
+  if(result==='correct'){
+    btn.classList.add('correct');
+    document.getElementById(qid+'-correct').classList.add('show');
+    quizScore++;
+  } else {
+    btn.classList.add('wrong');
+    document.getElementById(qid+'-wrong').classList.add('show');
+    // Highlight correct answer
+    opts.forEach(o=>{if(o.onclick.toString().includes("'correct'"))o.classList.add('correct');});
+  }
+  quizAnswered++;
+  const prog = document.getElementById('quizProgress');
+  if(prog) prog.textContent = quizAnswered + ' / ' + totalQuestions + ' answered';
+  if(quizAnswered>=totalQuestions) showScore();
+}
+
+function showScore(){
+  const d = document.getElementById('scoreDisplay');
+  d.classList.add('show');
+  document.getElementById('scoreNumber').textContent=quizScore+'/'+totalQuestions;
+  const pct = quizScore/totalQuestions;
+  let msg = pct===1?'Perfect Score! You are a Swift Array Master! 🏆':pct>=0.8?'Great job! Almost perfect! 🌟':pct>=0.5?'Good effort! Review the tricky ones. 💪':'Keep practicing! Review the lesson above. 📖';
+  document.getElementById('scoreMessage').textContent=msg;
+}
+
+function resetQuiz(){
+  quizScore=0; quizAnswered=0;
+  for(let i=1;i<=totalQuestions;i++){
+    const card = document.getElementById('q'+i);
+    card.querySelectorAll('.quiz-option').forEach(o=>{o.classList.remove('selected','correct','wrong'); o.disabled=false;});
+    const fc = document.getElementById('q'+i+'-correct'); if(fc)fc.classList.remove('show');
+    const fw = document.getElementById('q'+i+'-wrong'); if(fw)fw.classList.remove('show');
+  }
+  document.getElementById('scoreDisplay').classList.remove('show');
+  const prog = document.getElementById('quizProgress');
+  if(prog) prog.textContent = '0 / 6 answered';
+  document.getElementById('exit-ticket').scrollIntoView({behavior:'smooth'});
+}
+
+// ─── INIT challenge array ───
+renderArray(document.getElementById('challengeArray'), ['"grass"','"stone"','"water"']);
+</script>
+
+</body>
+</html>
